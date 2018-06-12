@@ -288,6 +288,7 @@ func process(rib *table.TableManager, l []*table.Path) (*table.Path, *table.Path
 }
 
 func TestFilterpathWitheBGP(t *testing.T) {
+	logger := log.New()
 	as := uint32(65000)
 	p1As := uint32(65001)
 	p2As := uint32(65002)
@@ -305,31 +306,33 @@ func TestFilterpathWitheBGP(t *testing.T) {
 	d := rib.Update(path1)
 	new, old, _ := d[0].GetChanges(table.GLOBAL_RIB_NAME, 0, false)
 	assert.Equal(t, new, path1)
-	filterpath(p1, new, old)
-	filterpath(p2, new, old)
+	filterpath(logger, p1, new, old)
+	filterpath(logger, p2, new, old)
 
 	new, old = process(rib, []*table.Path{path1.Clone(true)})
 	assert.Equal(t, new, path2)
 	// p1 and p2 advertized the same prefix and p1's was best. Then p1 withdraw it, so p2 must get withdawal.
-	path := filterpath(p2, new, old)
+	path := filterpath(logger, p2, new, old)
 	assert.NotNil(t, path)
 	assert.True(t, path.IsWithdraw)
 
 	// p1 should get the new best (from p2)
-	assert.Equal(t, filterpath(p1, new, old), path2)
+	assert.Equal(t, filterpath(logger, p1, new, old), path2)
 
 	new, old = process(rib, []*table.Path{path2.Clone(true)})
 	assert.True(t, new.IsWithdraw)
 	// p2 withdraw so p1 should get withdrawal.
-	path = filterpath(p1, new, old)
+	path = filterpath(logger, p1, new, old)
 	assert.True(t, path.IsWithdraw)
 
 	// p2 withdraw so p2 should get nothing.
-	path = filterpath(p2, new, old)
+	path = filterpath(logger, p2, new, old)
 	assert.Nil(t, path)
 }
 
 func TestFilterpathWithiBGP(t *testing.T) {
+	logger := log.New()
+
 	as := uint32(65000)
 
 	rib := table.NewTableManager([]bgp.RouteFamily{bgp.RF_IPv4_UC})
@@ -346,15 +349,15 @@ func TestFilterpathWithiBGP(t *testing.T) {
 
 	new, old := process(rib, []*table.Path{path1})
 	assert.Equal(t, new, path1)
-	path := filterpath(p1, new, old)
+	path := filterpath(logger, p1, new, old)
 	assert.Nil(t, path)
-	path = filterpath(p2, new, old)
+	path = filterpath(logger, p2, new, old)
 	assert.Nil(t, path)
 
 	new, old = process(rib, []*table.Path{path1.Clone(true)})
-	path = filterpath(p1, new, old)
+	path = filterpath(logger, p1, new, old)
 	assert.Nil(t, path)
-	path = filterpath(p2, new, old)
+	path = filterpath(logger, p2, new, old)
 	assert.Nil(t, path)
 
 }
