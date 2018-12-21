@@ -213,12 +213,11 @@
   version = "v1.1.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:4fee44c7b58eeb4983222754a06f04866e2030206104e7be998305dbfb482785"
+  digest = "1:7ab90c89d3f2dc627dcfc1676c852db1da9a8059091ab49975a07e281e7dd38c"
   name = "github.com/spf13/cobra"
   packages = ["."]
   pruneopts = ""
-  revision = "d2d81d9a96e23f0255397222bb0b4e3165e492dc"
+  revision = "b26b538f693051ac6518e65672de3144ce3fbedc"
 
 [[projects]]
   branch = "master"

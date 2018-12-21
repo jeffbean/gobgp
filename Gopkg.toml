@@ -59,7 +59,7 @@
 
 [[constraint]]
   name = "github.com/spf13/cobra"
-  branch = "master"
+  revision = "b26b538f693051ac6518e65672de3144ce3fbedc"
 
 [[constraint]]
   name = "github.com/spf13/viper"
