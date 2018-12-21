@@ -1945,8 +1945,8 @@ type RouteTargetMembershipNLRI struct {
 }
 
 func (n *RouteTargetMembershipNLRI) DecodeFromBytes(data []byte, options ...*MarshallingOption) error {
+	var err error
 	if IsAddPathEnabled(true, RF_RTC_UC, options) {
-		var err error
 		data, err = n.decodePathIdentifier(data)
 		if err != nil {
 			return err
@@ -1963,12 +1963,8 @@ func (n *RouteTargetMembershipNLRI) DecodeFromBytes(data []byte, options ...*Mar
 		return NewMessageError(BGP_ERROR_UPDATE_MESSAGE_ERROR, BGP_ERROR_SUB_MALFORMED_ATTRIBUTE_LIST, nil, "Not all RouteTargetMembershipNLRI bytes available")
 	}
 	n.AS = binary.BigEndian.Uint32(data[0:4])
-	rt, err := ParseExtended(data[4:])
-	n.RouteTarget = rt
-	if err != nil {
-		return err
-	}
-	return nil
+	n.RouteTarget, err = ParseExtended(data[4:])
+	return err
 }
 
 func (n *RouteTargetMembershipNLRI) Serialize(options ...*MarshallingOption) ([]byte, error) {
@@ -2308,10 +2304,8 @@ func (er *EVPNEthernetAutoDiscoveryRoute) DecodeFromBytes(data []byte) error {
 	data = data[10:]
 	er.ETag = binary.BigEndian.Uint32(data[0:4])
 	data = data[4:]
-	if er.Label, err = labelDecode(data); err != nil {
-		return err
-	}
-	return nil
+	er.Label, err = labelDecode(data)
+	return err
 }
 
 func (er *EVPNEthernetAutoDiscoveryRoute) Serialize() ([]byte, error) {
@@ -2779,12 +2773,9 @@ func (er *EVPNIPPrefixRoute) DecodeFromBytes(data []byte) error {
 	er.GWIPAddress = data[offset : offset+addrLen]
 	offset += addrLen
 
-	if er.Label, err = labelDecode(data[offset : offset+3]); err != nil {
-		return err
-	}
 	//offset += 3
-
-	return nil
+	er.Label, err = labelDecode(data[offset : offset+3])
+	return err
 }
 
 func (er *EVPNIPPrefixRoute) Serialize() ([]byte, error) {

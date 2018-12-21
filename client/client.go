@@ -38,7 +38,7 @@ type Client struct {
 }
 
 func defaultGRPCOptions() []grpc.DialOption {
-	return []grpc.DialOption{grpc.WithTimeout(time.Second), grpc.WithBlock(), grpc.WithInsecure()}
+	return []grpc.DialOption{grpc.WithBlock(), grpc.WithInsecure()}
 }
 
 // New returns a new Client using the given target and options for dialing
@@ -57,6 +57,10 @@ func NewWith(ctx context.Context, target string, opts ...grpc.DialOption) (*Clie
 	if len(opts) == 0 {
 		opts = defaultGRPCOptions()
 	}
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+
 	conn, err := grpc.DialContext(ctx, target, opts...)
 	if err != nil {
 		return nil, err

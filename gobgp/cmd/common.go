@@ -24,7 +24,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -252,7 +251,6 @@ func newClient() *cli.Client {
 			}
 		}
 		grpcOpts = []grpc.DialOption{
-			grpc.WithTimeout(time.Second),
 			grpc.WithBlock(),
 			grpc.WithTransportCredentials(creds),
 		}

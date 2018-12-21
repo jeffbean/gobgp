@@ -18,9 +18,10 @@ package bmp
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/osrg/gobgp/packet/bgp"
 	"math"
 	"net"
+
+	"github.com/osrg/gobgp/packet/bgp"
 )
 
 type BMPHeader struct {
@@ -490,10 +491,7 @@ func (body *BMPPeerUpNotification) ParseBody(msg *BMPMessage, data []byte) error
 	body.SentOpenMsg = sentopen
 	data = data[body.SentOpenMsg.Header.Len:]
 	body.ReceivedOpenMsg, err = bgp.ParseBGPMessage(data)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (body *BMPPeerUpNotification) Serialize() ([]byte, error) {
